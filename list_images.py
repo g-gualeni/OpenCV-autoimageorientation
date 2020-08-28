@@ -34,5 +34,13 @@ def corners_read(image_path):
     return rect
 
 
+def corner_scale(image, image_display, points):
+    # print(corner_scale.__name__, points)
+    (display_w, display_h) = image_display.shape[:2]
+    (image_w, image_h) = image.shape[:2]
+    scale_w: float = display_w / image_w
+    scale_h: float = display_h / image_h
 
+    scaled_pts = points * (scale_w, scale_h)
 
+    return scaled_pts
