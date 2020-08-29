@@ -4,6 +4,7 @@ import os
 import numpy as np
 
 
+# List all files in a folder
 def files(path, extension):
     path2 = path.strip()
     path2 = path2.replace('\\', '/')
@@ -14,6 +15,7 @@ def files(path, extension):
     return file_list
 
 
+# Read corners position from a JSON file named as the image file
 def corners_read(image_path):
     path = image_path.strip() + ".json"
 
@@ -34,6 +36,7 @@ def corners_read(image_path):
     return rect
 
 
+# Rescale corner position for the display image
 def corner_scale(image, image_display, points):
     # print(corner_scale.__name__, points)
     (display_w, display_h) = image_display.shape[:2]
