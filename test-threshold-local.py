@@ -1,5 +1,5 @@
 from timeit import default_timer as timer
-
+import pandas as pd
 import imutils
 from skimage.filters import threshold_local
 import cv2
@@ -21,18 +21,18 @@ for image_file in image_files:
 
     # There is one threshold value for each pixels
     start = timer()
-    threshold_mask = threshold_local(image_bw, 201, offset=50, method="gaussian")
+    # Offset is subtracted to the mask, so when we check we make faint structure white,
+    # because they are brighter than the threshold.
+    threshold_mask = threshold_local(image_bw, 21, offset=25, method="gaussian")
     print("[INFO]: Elapsed time", (timer()-start)*1000, "[ms]")
     image_bw_display = imutils.resize(image_bw, width=500)
     cv2.imshow("Current", image_display)
     cv2.imshow("Lightness", image_bw_display)
-    th_max = threshold_mask.max()
-    th_min = threshold_mask.min()
-
-    plot_mask = threshold_mask - th_min
-    plot_mask = plot_mask * (255/th_max)
-    threshold_mask_display = imutils.resize(plot_mask, width=500)
+    threshold_mask_display = imutils.resize(threshold_mask, width=500).astype("uint8")
     cv2.imshow("mask", threshold_mask_display)
+    # Check the mask content
+    df = pd.DataFrame(threshold_mask_display)
+    print(df.head(200))
 
     # Thresholding to binary. The result is boolean, astype change it to u-int
     # but it is still 0, 1. So we multiply by 255 to scale it as an image
