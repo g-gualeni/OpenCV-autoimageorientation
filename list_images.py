@@ -3,6 +3,7 @@ import json
 import os
 
 import cv2
+import imutils
 import numpy as np
 
 
@@ -90,3 +91,38 @@ def image_stretching(image, range_min, range_max):
     out_image4 = out_image3 * amplification
     out_image5 = out_image4.astype('uint8')
     return out_image5
+
+
+# Generate a contour with the same size of the image
+def contours_from_image(img, border_x, border_y):
+    img_contour = np.zeros((4, 1, 2), dtype=int)
+    img_h, img_w = img.shape[:2]
+    print(img.shape)
+    img_contour[0] = (0 + border_x, 0 + border_y)
+    img_contour[1] = (img_w - border_x, 0 + border_y)
+    img_contour[2] = (img_w - border_x, img_h - border_y)
+    img_contour[3] = (0 + border_x, img_h - border_y)
+    return img_contour
+
+
+# Return empty contour if it is impossible to find a valid rect
+def contours_from_edges(img_canny):
+    contours = cv2.findContours(img_canny.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours = imutils.grab_contours(contours)
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:5]
+    screen_contour = []
+
+    for c in contours:
+        # approximate the contour
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+        # if our approximated contour has four points, then we
+        # can assume that we have found our screen
+        if len(approx) == 4:
+            screen_contour = approx
+            break
+
+        cv2.drawContours(img_canny, [c], -1, (50, 50, 50), 2)
+        cv2.imshow("Contour From Edges: Debug", img_canny)
+
+    return screen_contour

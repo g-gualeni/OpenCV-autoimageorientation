@@ -48,7 +48,7 @@ while 1:
         plt.plot(histogram, color='g')
         plt.xlim([0, 256])
         plt.title("Gray Histogram")
-        plt.show()
+        # plt.show()
         command = "process"
 
     if command == "process":
@@ -68,10 +68,20 @@ while 1:
 
         start = timer()
         image_wk_bw_canny = cv2.Canny(image_wk_bw_blurred, canny_min_val, canny_max_val, False)
-        print("[INFO]: Canny Elapsed time", (timer() - start) * 1000)
+        print("[INFO]: Canny Elapsed time", (timer() - start) * 1000, "[ms]")
         cv2.imshow("Contour: Canny", image_wk_bw_canny)
         cv2.createTrackbar("Th MinVal", "Contour: Canny", canny_min_val, 255, nothing)
         cv2.createTrackbar("Th MaxVal", "Contour: Canny", canny_max_val, 255, nothing)
+
+        # Contour search
+        start = timer()
+        screen_contour = list_images.contours_from_edges(image_wk_bw_canny)
+        print("[INFO]: Contour Search", (timer() - start) * 1000, "[ms]")
+        if len(screen_contour) == 0:
+            screen_contour = list_images.contours_from_image(image_wk_bw_canny, 0, 0)
+
+        cv2.drawContours(image_wk, [screen_contour], -1, (0, 255, 0), 2)
+        cv2.imshow("Contour: Outline", image_wk)
 
         command = "idle"
 
