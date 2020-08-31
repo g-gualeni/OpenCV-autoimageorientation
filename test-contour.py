@@ -40,24 +40,24 @@ while 1:
         image_display = imutils.resize(image, width=500)
         ratio = image.shape[0] / 500
         cv2.imshow("Contour: Current", image_display)
-        image_display_gray = cv2.cvtColor(image_display, cv2.COLOR_BGR2HLS)
-        # image_display_gray = cv2.equalizeHist(image_display_gray)
+        image_display_hls = cv2.cvtColor(image_display, cv2.COLOR_BGR2HLS)
+        range_min, range_max = list_images.image_range(image_display_hls, 1, 3)
+        image_display_gray = list_images.image_stretching(image_display_hls[:, :, 1], range_min, range_max)
+        cv2.imshow("Contour: BW Equalized", image_display_gray)
         histogram = cv2.calcHist([image_display_gray], [0], None, [256], [0, 256])
         plt.plot(histogram, color='g')
         plt.xlim([0, 256])
         plt.title("Gray Histogram")
         plt.show()
-        cv2.imshow("Contour: BW Equalized", image_display_gray)
         command = "process"
 
     if command == "process":
         # Get the lightness
         start = timer()
-        image_wk = imutils.resize(image, width=300)
-        image_wk_lab = cv2.cvtColor(image_wk, cv2.COLOR_BGR2GRAY)
-        # image_wk_bw: object = image_wk_lab[:, :, 0]
-        image_wk_bw = image_wk_lab
-        image_wk_bw = cv2.equalizeHist(image_wk_lab)
+        image_wk = imutils.resize(image, width=500)
+        image_wk_hls = cv2.cvtColor(image_wk, cv2.COLOR_BGR2HLS)
+        range_min, range_max = list_images.image_range(image_wk_hls, 1, 3)
+        image_wk_bw = list_images.image_stretching(image_wk_hls[:, :, 1], range_min, range_max)
         print("[INFO]: Sampling and Conversion Elapsed time", (timer() - start) * 1000, "[ms]")
 
         start = timer()

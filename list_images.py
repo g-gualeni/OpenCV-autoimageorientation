@@ -1,6 +1,8 @@
 import glob
 import json
 import os
+
+import cv2
 import numpy as np
 
 
@@ -47,3 +49,44 @@ def corner_scale(image, image_display, points):
     scaled_pts = points * (scale_w, scale_h)
 
     return scaled_pts
+
+
+# Image Range
+# Return the min and max value, excluding a fixed % of points
+# this help remove noise
+def image_range(image, channel, filter_percentage):
+    histogram = cv2.calcHist([image], [channel], None, [256], [0, 256])
+    img_w, img_h = image.shape[:2]
+    image_area = img_w * img_h
+    filter_th = image_area * filter_percentage / 100
+    acc = 0
+    range_min = 0
+    for idx, val in enumerate(histogram, 0):
+        if acc + val > filter_th:
+            range_min = idx
+            break
+        acc = acc + val
+
+    acc = 0
+    for idx in range(255, -1, -1):
+        val = histogram[idx]
+        if acc + val > filter_th:
+            range_max = idx
+            break
+        acc = acc + val
+
+    return range_min, range_max
+
+
+# Adjust image dynamic range
+# not working correctly because the black and white pixel are flipped
+# not sure it is useful
+def image_stretching(image, range_min, range_max):
+    # Thresholding above range
+    th1, out_image1 = cv2.threshold(image, range_max, 255, cv2.THRESH_TRUNC)
+    out_image2 = out_image1.astype("float") - range_min
+    out_image3 = np.where(out_image2 < 0, 0, out_image2)
+    amplification = 255 / (range_max - range_min)
+    out_image4 = out_image3 * amplification
+    out_image5 = out_image4.astype('uint8')
+    return out_image5
