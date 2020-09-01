@@ -5,6 +5,9 @@ import collections
 import list_images
 import numpy as np
 from matplotlib import pyplot as plt
+from skimage.filters import threshold_local
+
+import transform
 
 
 def nothing(x):
@@ -17,12 +20,10 @@ image_files_d = collections.deque(image_files)
 
 # Global variables
 kernel = 5
-new_kernel = 0
+new_kernel = kernel
 command = "read"
 image = np.zeros(shape=[1, 1, 3], dtype=np.uint8)
 ratio = 1
-canny_min_val = 75
-canny_max_val = 200
 
 while 1:
     k = cv2.waitKey(100) & 0xFF
@@ -67,21 +68,36 @@ while 1:
         cv2.createTrackbar("Kernel", "Contour: GaussianBlur", kernel, 55, nothing)
 
         start = timer()
-        image_wk_bw_canny = cv2.Canny(image_wk_bw_blurred, canny_min_val, canny_max_val, False)
+        image_wk_bw_canny = imutils.auto_canny(image_wk_bw_blurred)
         print("[INFO]: Canny Elapsed time", (timer() - start) * 1000, "[ms]")
         cv2.imshow("Contour: Canny", image_wk_bw_canny)
-        cv2.createTrackbar("Th MinVal", "Contour: Canny", canny_min_val, 255, nothing)
-        cv2.createTrackbar("Th MaxVal", "Contour: Canny", canny_max_val, 255, nothing)
 
         # Contour search
         start = timer()
-        screen_contour = list_images.contours_from_edges(image_wk_bw_canny)
-        print("[INFO]: Contour Search", (timer() - start) * 1000, "[ms]")
+        min_fill_percentage = 20
+        # 1 using canny and contour approximation
+        screen_contour = list_images.contours_from_edges(image_wk_bw_canny, min_fill_percentage)
+        # 2 using canny, contour, convex hull and minAreaRect
         if len(screen_contour) == 0:
-            screen_contour = list_images.contours_from_image(image_wk_bw_canny, 0, 0)
+            screen_contour = list_images.contours_from_edges_convex_hull(image_wk_bw_canny, min_fill_percentage)
+        # 3 using image shape
+        if len(screen_contour) == 0:
+            screen_contour = list_images.contours_from_image(image_wk_bw_canny, 10, 10)
+
+        print("[INFO]: Contour Search", (timer() - start) * 1000, "[ms]")
+
+        image_wk_bw_warped = transform.four_point_transform(image_wk_bw, screen_contour.reshape(4, 2))
+        # I don't like the result of the binarization
+        # threshold_mask = threshold_local(image_wk_bw_warped, 21, offset=5, method="gaussian")
+        # image_wk_bw_warped = (image_wk_bw_warped > threshold_mask).astype("uint8") * 255
 
         cv2.drawContours(image_wk, [screen_contour], -1, (0, 255, 0), 2)
         cv2.imshow("Contour: Outline", image_wk)
+        cv2.imshow("Warped Binary Image", image_wk_bw_warped)
+
+        list_images.image_save(image_wk_bw_warped, image_files_d[0],
+                               suffix='_cut',
+                               destination_folder="test-data-cutted")
 
         command = "idle"
 
@@ -90,11 +106,4 @@ while 1:
     new_kernel = (new_kernel & 0xFE)+1
     if new_kernel != kernel:
         kernel = new_kernel
-        command = "process"
-
-    new_canny_min_val = cv2.getTrackbarPos("Th MinVal", "Contour: Canny")
-    new_canny_max_val = cv2.getTrackbarPos("Th MaxVal", "Contour: Canny")
-    if(new_canny_min_val != canny_min_val ) or (new_canny_max_val != canny_max_val):
-        canny_min_val = new_canny_min_val
-        canny_max_val = new_canny_max_val
         command = "process"

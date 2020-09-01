@@ -1,10 +1,12 @@
 import glob
 import json
+import ntpath
 import os
 
 import cv2
 import imutils
 import numpy as np
+from pathlib import Path
 
 
 # List all files in a folder
@@ -58,8 +60,8 @@ def corner_scale(image, image_display, points):
 def image_range(image, channel, filter_percentage):
     histogram = cv2.calcHist([image], [channel], None, [256], [0, 256])
     img_w, img_h = image.shape[:2]
-    image_area = img_w * img_h
-    filter_th = image_area * filter_percentage / 100
+    area = img_w * img_h
+    filter_th = area * filter_percentage / 100
     acc = 0
     range_min = 0
     for idx, val in enumerate(histogram, 0):
@@ -69,6 +71,7 @@ def image_range(image, channel, filter_percentage):
         acc = acc + val
 
     acc = 0
+    range_max = 0
     for idx in range(255, -1, -1):
         val = histogram[idx]
         if acc + val > filter_th:
@@ -77,6 +80,12 @@ def image_range(image, channel, filter_percentage):
         acc = acc + val
 
     return range_min, range_max
+
+
+# Get image area in pixels
+def image_area(image):
+    img_h, img_w = image.shape[:2]
+    return img_h * img_w
 
 
 # Adjust image dynamic range
@@ -94,10 +103,10 @@ def image_stretching(image, range_min, range_max):
 
 
 # Generate a contour with the same size of the image
+# or a little smaller
 def contours_from_image(img, border_x, border_y):
     img_contour = np.zeros((4, 1, 2), dtype=int)
     img_h, img_w = img.shape[:2]
-    print(img.shape)
     img_contour[0] = (0 + border_x, 0 + border_y)
     img_contour[1] = (img_w - border_x, 0 + border_y)
     img_contour[2] = (img_w - border_x, img_h - border_y)
@@ -106,23 +115,65 @@ def contours_from_image(img, border_x, border_y):
 
 
 # Return empty contour if it is impossible to find a valid rect
-def contours_from_edges(img_canny):
+# Validate the contour based on area occupation percentage (0-100)
+def contours_from_edges(img_canny, min_area_percentage):
     contours = cv2.findContours(img_canny.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     contours = imutils.grab_contours(contours)
     contours = sorted(contours, key=cv2.contourArea, reverse=True)[:5]
     screen_contour = []
 
-    for c in contours:
+    for idx, c in enumerate(contours):
         # approximate the contour
+        # print("Contour:", idx, "Area:", cv2.contourArea(c), len(c))
         peri = cv2.arcLength(c, True)
-        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+        approx = cv2.approxPolyDP(c, 0.01 * peri, True)
         # if our approximated contour has four points, then we
         # can assume that we have found our screen
-        if len(approx) == 4:
+        fill_rate = 100 * cv2.contourArea(approx) / image_area(img_canny)
+        # print(fill_rate)
+        if (len(approx) == 4) and (fill_rate > min_area_percentage):
             screen_contour = approx
             break
-
-        cv2.drawContours(img_canny, [c], -1, (50, 50, 50), 2)
-        cv2.imshow("Contour From Edges: Debug", img_canny)
+        # Just for debug... keep it but commented
+        # img_canny_display = cv2.cvtColor(img_canny, cv2.COLOR_GRAY2BGR)
+        # c2 = cv2.convexHull(c)
+        # cv2.drawContours(img_canny_display, [c2], -1, (255 - (10 * idx), 200, 10 * idx), -1)
+        # cv2.imshow("Contour From Edges: Debug", img_canny_display)
 
     return screen_contour
+
+
+# Use the convexhull from  each contour we see
+# this is  less precise but can be more robust
+# I use the min area rect of the biggest shape
+# Validate the contour based on area occupation percentage (0-100)
+def contours_from_edges_convex_hull(img_canny, min_area_percentage):
+    contours = cv2.findContours(img_canny, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours = imutils.grab_contours(contours)
+    convex_hulls = list()
+    for c in contours:
+        convex_hulls.append(cv2.convexHull(c))
+
+    # Get the one with biggest area
+    sorted_hulls = sorted(convex_hulls, key=cv2.contourArea, reverse=True)[:1]
+    rotated_rect = cv2.minAreaRect(sorted_hulls[0])
+    screen_contour = np.int0(cv2.boxPoints(rotated_rect))
+    fill_rate = 100 * cv2.contourArea(screen_contour) / image_area(img_canny)
+    # print(fill_rate)
+    if fill_rate > min_area_percentage:
+        return screen_contour
+    # If fail return an empty list
+    return []
+
+
+# Save an image adding prefix, suffix
+# save to a specified destination folder
+# get name from file path
+def image_save(image, filename, destination_folder, prefix="", suffix=""):
+    img_name = ntpath.basename(filename)
+    img_title, img_ext = os.path.splitext(img_name)
+    img_name_out = prefix + img_title + suffix + img_ext
+    img_path = os.path.join(destination_folder, img_name_out)
+    Path(destination_folder).mkdir(parents=True, exist_ok=True)
+    cv2.imwrite(img_path, image)
+    # print(filename, prefix, suffix, destination_folder, img_name_out)
