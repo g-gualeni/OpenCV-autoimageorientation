@@ -57,7 +57,10 @@ def corner_scale(image, image_display, points):
 # Image Range
 # Return the min and max value, excluding a fixed % of points
 # this help remove noise
-def image_range(image, channel, filter_percentage):
+# Usage:
+#   range_min, range_max = list_images.image_range(image, 0, 3)
+#
+def image_range(image, channel=0, filter_percentage=3):
     histogram = cv2.calcHist([image], [channel], None, [256], [0, 256])
     img_w, img_h = image.shape[:2]
     area = img_w * img_h
@@ -91,7 +94,13 @@ def image_area(image):
 # Adjust image dynamic range
 # not working correctly because the black and white pixel are flipped
 # not sure it is useful
+# Usage:
+# img_wk_bw = image_stretching(image_wk_hls[:, :, 1], range_min, range_max)
 def image_stretching(image, range_min, range_max):
+    if range_min == range_max:
+        res = "Range min and range max are equal and {val}".format(val=range_max)
+        raise ValueError(res)
+
     # Thresholding above range
     th1, out_image1 = cv2.threshold(image, range_max, 255, cv2.THRESH_TRUNC)
     out_image2 = out_image1.astype("float") - range_min
@@ -177,3 +186,36 @@ def image_save(image, filename, destination_folder, prefix="", suffix=""):
     Path(destination_folder).mkdir(parents=True, exist_ok=True)
     cv2.imwrite(img_path, image)
     # print(filename, prefix, suffix, destination_folder, img_name_out)
+
+
+# Plot hugh lines
+def lines_hough_plot(image, lines, bgr_color=(0,255, 0), thickness=2):
+    for line in lines:
+        rho, theta = line[0]
+        aa = np.cos(theta)
+        bb = np.sin(theta)
+        x0 = aa * rho
+        y0 = bb * rho
+        # first point
+        x1 = int(x0 + 1000*(-bb))
+        y1 = int(y0 + 1000 * aa)
+        # second point
+        x2 = int(x0 - 1000 * (-bb))
+        y2 = int(y0 - 1000 * aa)
+
+        # draw the line
+        cv2.line(image, (x1, y1), (x2, y2), bgr_color, thickness)
+        cv2.line(image, (x1, y1), (x2, 100), bgr_color, thickness)
+
+    cv2.imshow("tua zia", image)
+
+    return image
+
+
+# Plot hugh lines from hough P so lines is already a list of points in the image
+def lines_hough_p_plot(image, lines, bgr_color=(0,255, 0), thickness=2):
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        cv2.line(image, (x1, y1), (x2, y2), bgr_color, thickness)
+
+    return image
