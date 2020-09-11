@@ -13,7 +13,6 @@ def nothing(x):
 
 
 # START
-
 image_files = list_images.files("test-data-cutted", " png")
 image_files_d = collections.deque(image_files)
 erosion_size = 2
@@ -66,7 +65,7 @@ while 1:
         image_wk_col = cv2.cvtColor(image_wk_bw, cv2.COLOR_GRAY2BGR)
         image_wk_col = list_images.lines_hough_p_plot(image_wk_col, lines[:10])
 
-        cv2.imshow("Stretching", image_wk_col)
+        cv2.imshow("Stretching+Lines", image_wk_col)
         cv2.imshow("Canny", image_wk_canny)
         cv2.createTrackbar("Kernel", "Erosion", erosion_size, 20, nothing)
         cv2.imshow("Erosion", image_wk_erode)
