@@ -39,22 +39,24 @@ while 1:
     if command == "process":
         # Get the lightness
         start = timer()
-        image_wk = img_as_float(io.imread(image_files[0]))
+        image_wk = imutils.resize(image, width=500)
+        image_wk_float = img_as_float(image_wk)
 
         # loop over the number of segments
-        for numSegments in (10, 100, 200, 300):
-            # apply SLIC and extract (approximately) the supplied number
-            # of segments
-            segments = slic(image_wk, n_segments=numSegments, sigma=5)
-            # show the output of SLIC
-            fig = plt.figure("Superpixels -- %d segments" % numSegments)
-            ax = fig.add_subplot(1, 1, 1)
-            ax.imshow(mark_boundaries(image_wk, segments, color=(1, 0, 0)))
-            plt.axis("off")
-            print("[INFO]: Segmentation", numSegments, "Elapsed time", (timer() - start) * 1000, "[ms]")
+        numSegments = 30
+        # apply SLIC and extract (approximately) the supplied number
+        # of segments
+        segments = slic(image_wk_float, n_segments=numSegments, sigma=2)
 
-        # show the plots
-        plt.show()
+        # show the output of SLIC
+        image_wk_display = mark_boundaries(image_wk, segments, color=(1, 0, 0))
+        cv2.imshow(str("SLIC: Display "), image_wk_display)
+        print("[INFO]: Segmentation", numSegments, "Elapsed time", (timer() - start) * 1000, "[ms] - Image Shape:",
+              image_wk.shape)
+
+        for segment in segments:
+            print(segment)
+
         command = "idle"
 
 
