@@ -18,7 +18,6 @@ image_files_d = collections.deque(image_files)
 erosion_size = 2
 new_erosion_size = erosion_size
 
-
 # Global variables
 command = "read"
 image = np.zeros(shape=[1, 1, 3], dtype=np.uint8)
@@ -60,7 +59,7 @@ while 1:
 
         start = timer()
         lines = cv2.HoughLinesP(image_wk_canny, 4, np.pi / 90, 50)
-        print(lines[:3])
+        # print(lines[:3])
 
         image_wk_col = cv2.cvtColor(image_wk_bw, cv2.COLOR_GRAY2BGR)
         image_wk_col = list_images.lines_hough_p_plot(image_wk_col, lines[:10])

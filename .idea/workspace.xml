@@ -20,8 +20,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="77157365-697b-44cf-9ee2-38fe1d07035e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/autoimageorientation-wkCpy.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/autoimageorientation-wkCpy.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-contour.py" beforeDir="false" afterPath="$PROJECT_DIR$/test-contour.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-data-cutted/Foto 2020-08-29 04.00.31 PM_cut.png" beforeDir="false" afterPath="$PROJECT_DIR$/test-data-cutted/Foto 2020-08-29 04.00.31 PM_cut.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-hough.py" beforeDir="false" afterPath="$PROJECT_DIR$/test-hough.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test-slic-superpixels.py" beforeDir="false" afterPath="$PROJECT_DIR$/test-slic-superpixels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-threshold-local.py" beforeDir="false" afterPath="$PROJECT_DIR$/test-threshold-local.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +59,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.test-slic-superpixels">
+  <component name="RunManager" selected="Python.test-contour">
     <configuration name="test-contour" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="autoimageorientation-wkCpy" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -161,10 +167,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test-slic-superpixels" />
-        <item itemvalue="Python.test-hough" />
         <item itemvalue="Python.test-contour" />
+        <item itemvalue="Python.test-hough" />
         <item itemvalue="Python.test-threshold-local" />
+        <item itemvalue="Python.test-slic-superpixels" />
         <item itemvalue="Python.test-manual-transform" />
       </list>
     </recent_temporary>
@@ -204,21 +210,33 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="739" y="462" key="FileChooserDialogImpl/1920.0.1280.693/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1598870501305" />
-    <state width="1899" height="348" key="GridCell.Tab.0.bottom" timestamp="1599854088414">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1259" height="180" key="GridCell.Tab.0.bottom" timestamp="1600326041251">
+      <screen x="0" y="23" width="1280" height="724" />
     </state>
+    <state width="1259" height="180" key="GridCell.Tab.0.bottom/0.23.1280.723@0.23.1280.723" timestamp="1599920397902" />
+    <state width="1259" height="180" key="GridCell.Tab.0.bottom/0.23.1280.724@0.23.1280.724" timestamp="1600326041251" />
+    <state width="1259" height="180" key="GridCell.Tab.0.bottom/0.23.1280.726@0.23.1280.726" timestamp="1599972367867" />
     <state width="1899" height="348" key="GridCell.Tab.0.bottom/1920.0.1280.693/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1599854088414" />
-    <state width="1899" height="348" key="GridCell.Tab.0.center" timestamp="1599854088413">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1259" height="180" key="GridCell.Tab.0.center" timestamp="1600326041250">
+      <screen x="0" y="23" width="1280" height="724" />
     </state>
+    <state width="1259" height="180" key="GridCell.Tab.0.center/0.23.1280.723@0.23.1280.723" timestamp="1599920397901" />
+    <state width="1259" height="180" key="GridCell.Tab.0.center/0.23.1280.724@0.23.1280.724" timestamp="1600326041250" />
+    <state width="1259" height="180" key="GridCell.Tab.0.center/0.23.1280.726@0.23.1280.726" timestamp="1599972367866" />
     <state width="1899" height="348" key="GridCell.Tab.0.center/1920.0.1280.693/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1599854088413" />
-    <state width="1899" height="348" key="GridCell.Tab.0.left" timestamp="1599854088413">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1259" height="180" key="GridCell.Tab.0.left" timestamp="1600326041250">
+      <screen x="0" y="23" width="1280" height="724" />
     </state>
+    <state width="1259" height="180" key="GridCell.Tab.0.left/0.23.1280.723@0.23.1280.723" timestamp="1599920397900" />
+    <state width="1259" height="180" key="GridCell.Tab.0.left/0.23.1280.724@0.23.1280.724" timestamp="1600326041250" />
+    <state width="1259" height="180" key="GridCell.Tab.0.left/0.23.1280.726@0.23.1280.726" timestamp="1599972367863" />
     <state width="1899" height="348" key="GridCell.Tab.0.left/1920.0.1280.693/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1599854088413" />
-    <state width="1899" height="348" key="GridCell.Tab.0.right" timestamp="1599854088413">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1259" height="180" key="GridCell.Tab.0.right" timestamp="1600326041251">
+      <screen x="0" y="23" width="1280" height="724" />
     </state>
+    <state width="1259" height="180" key="GridCell.Tab.0.right/0.23.1280.723@0.23.1280.723" timestamp="1599920397901" />
+    <state width="1259" height="180" key="GridCell.Tab.0.right/0.23.1280.724@0.23.1280.724" timestamp="1600326041251" />
+    <state width="1259" height="180" key="GridCell.Tab.0.right/0.23.1280.726@0.23.1280.726" timestamp="1599972367866" />
     <state width="1899" height="348" key="GridCell.Tab.0.right/1920.0.1280.693/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1599854088413" />
     <state width="1899" height="348" key="GridCell.Tab.1.bottom" timestamp="1599854088414">
       <screen x="0" y="0" width="1920" height="1040" />

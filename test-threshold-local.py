@@ -7,7 +7,6 @@ import list_images
 
 # Testing local thresholding
 
-
 image_files = list_images.files("test-data ", " png")
 for image_file in image_files:
     image = cv2.imread(image_file)
@@ -32,7 +31,7 @@ for image_file in image_files:
     cv2.imshow("mask", threshold_mask_display)
     # Check the mask content
     df = pd.DataFrame(threshold_mask_display)
-    print(df.head(200))
+    # print(df.head(200))
 
     # Thresholding to binary. The result is boolean, astype change it to u-int
     # but it is still 0, 1. So we multiply by 255 to scale it as an image

@@ -5,7 +5,6 @@ import collections
 import list_images
 import numpy as np
 from matplotlib import pyplot as plt
-from skimage.filters import threshold_local
 
 import transform
 
